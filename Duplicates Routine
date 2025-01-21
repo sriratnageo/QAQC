@@ -1,0 +1,37 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def plot_graph(df_path, title, m_pos_adjust=1.1, m_neg_adjust=0.9):
+    # Load the data
+    df = pd.read_csv(df_path)  # Replace with your CSV file path
+    x, y = df['First Value'].values, df['Second Value'].values  # Replace column names if needed
+
+    # Prevent division by zero
+    x[x == 0] = 0.001
+
+    # Fit the line and calculate limits
+    m, b = np.polyfit(x, y, 1)
+    m_pos, m_neg = m * m_pos_adjust, m * m_neg_adjust
+
+    # Determine point colors
+    df['Color'] = np.where((y < m_neg * x + b) | (y > m_pos * x + b), 'red', 'blue')
+
+    # Plot the graph
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(x=x, y=y, hue=df['Color'], palette={'blue': 'blue', 'red': 'red'})
+    plt.plot(x, m * x + b, color='black', label='X = Y Constant')
+    plt.plot(x, m_pos * x + b, color='red', linestyle='-', label='Error limit - Max')
+    plt.plot(x, m_neg * x + b, color='red', linestyle='-', label='Error limit - Min')
+
+    # Configure the graph
+    plt.xlabel('ASSAY value')
+    plt.ylabel('DUP-P value')
+    plt.title(title)
+    plt.legend()
+    plt.show()
+
+# Replace the file path and title with your data
+file_path = "path_to_your_file.csv"  # Enter your CSV file path
+plot_graph(file_path, title="Your Graph Title", m_pos_adjust=1.1, m_neg_adjust=0.9)
