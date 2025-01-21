@@ -1,0 +1,42 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Insert your element's values here
+limits = {
+    'label': 'Element_Label',  # Name of the column with the values
+    'upper_limit': 0.0,        # Upper limit
+    'expected_value': 0.0      # Expected value
+}
+
+def plot_blank_graph(file_path, y_label, title, upper_limit, expected_value):
+    # Read the CSV file
+    df = pd.read_csv(file_path)
+
+    # Set up the plot
+    plt.figure(figsize=(12, 6))
+    plt.scatter(df.index, df['Value'], color='blue', label='In Limit')  # Plot points
+
+    # Add limit and expected value lines
+    plt.axhline(y=upper_limit, color='red', label='Error limit - Max', linewidth=2)
+    plt.axhline(y=expected_value, color='green', label='Expected Value', linewidth=2)
+
+    # Highlight out-of-limit points
+    outliers = df[df['Value'] > upper_limit]
+    plt.scatter(outliers.index, outliers['Value'], color='red', label='Out of Limit')
+
+    # Configure the plot
+    plt.xlabel('Occurrence', fontsize=12)
+    plt.ylabel(y_label, fontsize=12)
+    plt.title(title, fontsize=16)
+    plt.legend()
+    plt.show()
+
+# Insert your CSV file path and adjust the parameters below
+file_path = "path_to_your_blank_data.csv"  # Path to your blank data file
+plot_blank_graph(
+    file_path=file_path,
+    y_label=limits['label'],
+    title='BLK - Your_Element',
+    upper_limit=limits['upper_limit'],
+    expected_value=limits['expected_value']
+)
