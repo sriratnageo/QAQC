@@ -1,0 +1,39 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Insert the path to your CSV file and element information
+file_path = "path_to_your_file.csv"
+element = "Element_Name"
+limits = {'lower_limit': 0.0, 'upper_limit': 0.0, 'expected_value': 0.0}  # Insert the correct values
+
+# Function to remove outliers
+def remove_outliers(data, column):
+    Q1 = data[column].quantile(0.25)
+    Q3 = data[column].quantile(0.75)
+    IQR = Q3 - Q1
+    return data[(data[column] >= (Q1 - 1.5 * IQR)) & (data[column] <= (Q3 + 1.5 * IQR))]
+
+# Load the data
+data = pd.read_csv(file_path)
+lab_data = remove_outliers(data, 'Value')
+
+# Calculate the mean
+mean_value = lab_data['Value'].mean()
+
+# Create the histogram
+plt.hist(lab_data['Value'], bins=20, color='blue', edgecolor='black')
+plt.axvline(x=limits['expected_value'], color='green', label='True Grade', linewidth=3)
+plt.axvline(x=limits['lower_limit'], color='red', linestyle='solid', label='Lower Limit', linewidth=2)
+plt.axvline(x=limits['upper_limit'], color='red', linestyle='solid', label='Upper Limit', linewidth=2)
+plt.axvline(x=mean_value, color='red', linestyle='dashed', label='Average of Repeats', linewidth=3)
+
+# Configure the plot
+plt.title(f'Lab - {element}')
+plt.xlabel('Value')
+plt.ylabel('Frequency')
+plt.legend()
+plt.tight_layout()
+
+# Display the plot
+plt.show()
