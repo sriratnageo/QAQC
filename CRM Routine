@@ -1,0 +1,40 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Definition of limits for a single element
+limits = {
+    'Element': {
+        'label': 'Element_per_FRX',
+        'lower_limit': 2.5,    # Replace with the correct value
+        'upper_limit': 3.5,    # Replace with the correct value
+        'expected_value': 3.0  # Replace with the correct value
+    }
+}
+
+def plot_graph(df_path, element_limits):
+    df = pd.read_csv(df_path, encoding='latin1')
+    df['Count'] = range(1, len(df) + 1)
+    
+    plt.figure(figsize=(10, 5))
+    sns.scatterplot(x='Count', y='Value', data=df, s=50, color='blue', label='Data Points - In Limit')
+    
+    plt.axhline(y=element_limits['lower_limit'], color='red', linestyle='--', label='Error limit - Min')
+    plt.axhline(y=element_limits['upper_limit'], color='red', linestyle='--', label='Error limit - Max')
+    plt.axhline(y=element_limits['expected_value'], color='green', linestyle='--', label='Expected Value')
+    
+    # Highlight out-of-limit points
+    outliers = df[(df['Value'] < element_limits['lower_limit']) | (df['Value'] > element_limits['upper_limit'])]
+    plt.scatter(outliers['Count'], outliers['Value'], color='red', label='Data Points - Out limit')
+    
+    plt.xlabel('Occurrence')
+    plt.ylabel(element_limits['label'])
+    plt.title(f'STANDARD - {element_limits["label"]}')
+    plt.legend()
+    plt.show()
+
+# Path to the CSV file
+csv_path = 'path_to_file.csv'  # Replace with the correct path
+
+# Function call to plot the graph
+plot_graph(csv_path, limits['Element'])
