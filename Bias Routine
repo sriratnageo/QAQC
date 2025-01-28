@@ -1,0 +1,25 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load data (replace with your file path)
+df = pd.read_csv("your_file.csv")
+
+# Set plot style
+sns.set_style("ticks", {"axes.grid": True, "grid.color": "white", "axes.facecolor": "0.97"})
+
+# Define elements to plot
+elements = ['Element1', 'Element2', 'Element3']  # Replace with actual column names
+
+# Create figure
+fig, axs = plt.subplots(len(elements), 1, figsize=(10, 6))
+fig.subplots_adjust(hspace=0.3)
+
+# Plot bias trends
+for ax, col in zip(axs, elements):
+    sns.lineplot(x='Date', y=col, data=df, marker='o', ax=ax, color='blue')
+    ax.set_title(f"Bias Trend - {col}")
+    ax.set_ylabel("Bias %")
+    ax.set_xlabel("Date")
+
+plt.show()
