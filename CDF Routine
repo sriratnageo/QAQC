@@ -1,0 +1,45 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# User-defined parameters
+files = ['Element1', 'Element2', 'Element3']  # Replace with your element names
+file_path = "your_directory_path/"  # Replace with the path to your dataset
+file_extension = ".csv"  # Change if necessary (e.g., ".xlsx", ".txt")
+lab_col = 'Laboratory'  # Column name for lab identifiers
+value_col = 'Value'  # Column name for measured values
+labs = ['Lab_1', 'Lab_2']  # Replace with the names of the labs to compare
+
+# Configure plot style
+sns.set_style("ticks", {"axes.grid": True, "grid.color": "white", "axes.facecolor": "0.97"})
+
+# Define figure size based on the number of elements
+rows = len(files) // 2 + len(files) % 2
+fig, axs = plt.subplots(nrows=rows, ncols=2, figsize=(12, 12))
+
+# Loop through each file to generate CDF plots
+for ax, file in zip(axs.flatten(), files):
+    # Load dataset
+    df = pd.read_csv(file_path + file + file_extension)
+
+    # Filter dataset for selected laboratories
+    df_filtered = df[df[lab_col].isin(labs)]
+
+    # Compute CDF for each lab
+    for lab in labs:
+        lab_values = np.sort(df_filtered[df_filtered[lab_col] == lab][value_col])
+        probabilities = np.linspace(0, 1, len(lab_values))
+        ax.plot(lab_values, probabilities, label=lab)
+
+    # Set title and legend
+    ax.set_title(f'CDF for {file}')
+    ax.legend()
+
+# Remove empty subplot if an odd number of elements
+if len(files) % 2:
+    fig.delaxes(axs.flatten()[-1])
+
+# Adjust layout and display plot
+plt.tight_layout()
+plt.show()
