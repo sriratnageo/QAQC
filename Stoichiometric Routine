@@ -1,0 +1,40 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def plot_graph(ax, file_path, title, y_error_limit):
+    df = pd.read_csv(file_path)
+    
+    # Compute Percentile Rank for the 'Stoichiometry' column
+    percentile_rank = df["Stoichiometry"].rank(pct=True) * 100
+    
+    # Scatter plot
+    sns.scatterplot(x=percentile_rank, y=df["Stoichiometry"], ax=ax)
+    
+    # Graph settings
+    ax.set_title(title)
+    ax.set_xlabel("Percentile Rank (%)")
+    ax.set_ylabel("Stoichiometry")
+    ax.set_ylim(70, 115)
+    
+    # Add red dashed lines at 95 and 105
+    for threshold in [95, 105]:
+        ax.axhline(y=threshold, color='red', linestyle='--')
+    
+    ax.set_xticks(np.arange(0, 101, 10))
+    ax.set_yticks(np.arange(70, 120, 5))
+    
+    # Legend
+    ax.legend([
+        plt.Line2D([], [], marker='o', color='blue', linestyle='', label='Data Points'),
+        plt.Line2D([], [], color='red', linestyle='--', label='Error Limit')
+    ])
+
+# Set style
+sns.set_style("ticks", {"axes.grid": True, "grid.color": "white", "axes.facecolor": "0.95"})
+
+# Create figure
+fig, ax = plt.subplots(figsize=(16, 4))
+file_path = 'path/to/your/file.csv'  # User should replace this with their file path
+plot_graph(ax, file_path, "Stoichiometric Closure", limits['b']['x_error_limit'])
